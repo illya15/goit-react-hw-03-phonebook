@@ -15,58 +15,69 @@ export class App extends Component {
     filter: '',
   };
 
-    addContact = (name, number) => {
-      const duplicate = this.state.contacts.find(
-        contact => contact.name === name
-      );
-      if (duplicate) {
-        alert('A customer already exists ');
-        return;
-      }
+  componentDidMount() {
+    const localData = localStorage.getItem('contacts');
+    if (localData) {
       this.setState({
-        contacts: [...this.state.contacts, { id: nanoid(), name, number }],
+        contacts: JSON.parse(localData),
       });
-    };
-
-    changeFilter = e => {
-      this.setState({
-        filter: e.currentTarget.value,
-      });
-    };
-
-    deleteContact = id => {
-      const filterId = this.state.contacts.filter(contact => contact.id !== id);
-      this.setState({
-        contacts: [...filterId],
-      });
-    };
- componentDidUpdate(prevProps,prevState) {
- console.log(this.state);
-  console.log(prevState)
- }
-
-    render() {
-      return (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: '#010101',
-          }}
-        >
-          <h2>Phonebook</h2>
-          <Form onSubmit={this.addContact} />
-          <h2>Contacts</h2>
-          <Filter onChange={this.changeFilter} value={this.state.filter} />
-          <ContactList
-            onClick={this.deleteContact}
-            contacts={this.state.contacts}
-            filter={this.state.filter}
-          />
-        </div>
-      );
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
+  addContact = (name, number) => {
+    const duplicate = this.state.contacts.find(
+      contact => contact.name === name
+    );
+    if (duplicate) {
+      alert('A customer already exists ');
+      return;
+    }
+    this.setState({
+      contacts: [...this.state.contacts, { id: nanoid(), name, number }],
+    });
+  };
+
+  changeFilter = e => {
+    this.setState({
+      filter: e.currentTarget.value,
+    });
+  };
+
+  deleteContact = id => {
+    const filterId = this.state.contacts.filter(contact => contact.id !== id);
+    this.setState({
+      contacts: [...filterId],
+    });
+  };
+
+  render() {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: '#010101',
+        }}
+      >
+        <h2>Phonebook</h2>
+        <Form onSubmit={this.addContact} />
+        <h2>Contacts</h2>
+        <Filter onChange={this.changeFilter} value={this.state.filter} />
+        <ContactList
+          onClick={this.deleteContact}
+          contacts={this.state.contacts}
+          filter={this.state.filter}
+        />
+      </div>
+    );
+  }
+}
 

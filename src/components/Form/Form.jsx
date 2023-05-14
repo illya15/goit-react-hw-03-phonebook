@@ -6,6 +6,7 @@ export class Form extends Component {
     number: '',
   };
 
+
   handleChange = ({ target: { name, value } }) => {
     this.setState({
       [name]: value,
